@@ -1,3 +1,5 @@
+const fallbackBuildDir = '.truffle-solidity-loader'
+
 /* External Module Dependencies */
 var TruffleContractCompiler = require('truffle/lib/contracts')
 var TruffleContractMigrator = require('truffle/lib/migrate')
@@ -39,9 +41,14 @@ function returnContractAsSource (filePath, compilationFinished) {
 var isCompilingContracts = false
 
 module.exports = function (source) {
+  var buildOpts = {}
+  buildOpts.logger = Logger
+  buildOpts = BuildOptionNormalizer.normalize(buildOpts, this.query)
+
   this.cacheable && this.cacheable()
 
-  var scratchPath = new ScratchDir()
+  var buildDir = buildOpts.build_directory ? buildOpts.build_directory : fallbackBuildDir
+  var scratchPath = new ScratchDir(buildDir, this.context)
   scratchPath.createIfMissing()
 
   var buildPath = scratchPath.path()
@@ -63,10 +70,6 @@ module.exports = function (source) {
       fs.unlinkSync(compiledContractPath)
     }
   }.bind(this))
-
-  var buildOpts = {}
-  buildOpts.logger = Logger
-  buildOpts = BuildOptionNormalizer.normalize(buildOpts, this.query)
 
   function waitForContractCompilation () {
     setTimeout(function () {
