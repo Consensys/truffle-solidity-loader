@@ -9,12 +9,12 @@ var provider = new Web3.providers.HttpProvider("http://localhost:8545");
 var contract = require("truffle-contract");
 
 // Instead of including a built json file
-import metacoin_artifacts from '../build/contracts/MyContract.json'
-var MyContract = contract(metacoin_artifacts)
+import myContract_artifacts from '../build/contracts/MyContract.json'
+var MyContract = contract(myContract_artifacts)
 
 //You can import the solidity contract directly
-import metacoin_artifacts from '../contracts/MyContract.sol'
-var MyContract = contract(metacoin_artifacts)
+import myContract_artifacts from '../contracts/MyContract.sol'
+var MyContract = contract(myContract_artifacts)
 
 MyContract.setProvider(provider);
 ```
