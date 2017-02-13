@@ -71,7 +71,7 @@ If you don't want to set query parameters, you can provide a `json` object.
     { loader: 'json-loader' },
     { loader: 'truffle-solidity-loader',
       options: {
-        migrations_directory=path.resolve(__dirname, './migrations'),
+        migrations_directory: path.resolve(__dirname, './migrations'),
         network: 'development'
       }
     }
