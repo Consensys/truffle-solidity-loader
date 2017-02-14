@@ -85,6 +85,7 @@ If you don't want to set query parameters, you can provide a `json` object.
   - `migrations_directory`: The path to a directory containing your Truffle migrations
   - `network`: A network name to use
   - `network_id`: A network id to use
+  - `contracts_build_directory`: Where do you want the created json file to exist?
 
 ## Contributing
 
