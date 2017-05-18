@@ -37,6 +37,8 @@ function returnContractAsSource (filePath, compilationFinished) {
 
 // This acts as a mutex to prevent multiple compilation runs
 var isCompilingContracts = false
+// Mutex to check if migration is complete
+var isMigrationComplete = false
 
 module.exports = function (source) {
   this.cacheable && this.cacheable()
@@ -68,12 +70,12 @@ module.exports = function (source) {
   buildOpts.logger = Logger
   buildOpts = BuildOptionNormalizer.normalize(buildOpts, this.query)
 
-  function waitForContractCompilation () {
+  function waitForContractMigration () {
     setTimeout(function () {
-      if (compiledContractExists(compiledContractPath)) {
+      if (isMigrationComplete) {
         returnContractAsSource(compiledContractPath, compilationFinished)
       } else {
-        waitForContractCompilation()
+        waitForContractMigration()
       }
     }.bind(this), 500)
   }
@@ -116,6 +118,7 @@ module.exports = function (source) {
           Logger.error(err)
           return compilationFinished(err, null)
         }
+        isMigrationComplete = true
         console.log('here', result)
         // Finally return the contract source we were originally asked for.
         returnContractAsSource(compiledContractPath, compilationFinished)
@@ -125,9 +128,5 @@ module.exports = function (source) {
     return
   }
 
-  if (compiledContractExists(compiledContractPath)) {
-    returnContractAsSource(compiledContractPath, compilationFinished)
-  } else {
-    waitForContractCompilation()
-  }
+  waitForContractMigration()
 }
