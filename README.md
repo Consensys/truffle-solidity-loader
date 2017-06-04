@@ -45,6 +45,7 @@ You can also override the Truffle config using a loader querystring as outlined 
   - `migrations_directory`: The path to a directory containing your Truffle migrations
   - `network`: A network name to use
   - `network_id`: A network id to use
+  - `skip_migrate`: Skip migrations (also available in config file)
 
 ## Contributing
 
