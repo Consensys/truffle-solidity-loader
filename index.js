@@ -100,7 +100,6 @@ module.exports = function (source) {
 
       isCompilingContracts = false
       Logger.log('COMPILATION FINISHED')
-      Logger.log('RUNNING MIGRATIONS')
 
       var migrationOpts = compilerOpts
       migrationOpts.migrations_directory = buildOpts.migrations_directory
@@ -109,17 +108,23 @@ module.exports = function (source) {
       migrationOpts.logger = Logger
       migrationOpts.reset = true                                 // Force the migrations to re-run
 
-      // Once all of the contracts have been compiled, we know we can immediately
-      // try to run the migrations safely.
-      TruffleContractMigrator.run(migrationOpts, function (err, result) {
-        if (err) {
-          Logger.error(err)
-          return compilationFinished(err, null)
-        }
-        console.log('here', result)
-        // Finally return the contract source we were originally asked for.
+      if (buildOpts.skip_migrate) {
+        Logger.log('SKIPPING MIGRATIONS')
         returnContractAsSource(compiledContractPath, compilationFinished)
-      })
+      } else {
+        Logger.log('RUNNING MIGRATIONS')
+        // Once all of the contracts have been compiled, we know we can immediately
+        // try to run the migrations safely.
+        TruffleContractMigrator.run(migrationOpts, function (err, result) {
+          if (err) {
+            Logger.error(err)
+            return compilationFinished(err, null)
+          }
+          console.log('here', result)
+          // Finally return the contract source we were originally asked for.
+          returnContractAsSource(compiledContractPath, compilationFinished)
+        })
+      }
     })
 
     return
