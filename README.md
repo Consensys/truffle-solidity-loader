@@ -19,73 +19,63 @@ var MyContract = contract(myContract_artifacts)
 MyContract.setProvider(provider);
 ```
 
-You can see this plugin in operation in the [Truffle+Webpack Demo App](https://github.com/ConsenSys/truffle-webpack-demo). The demo is for truffle 2.0.
-
-A project by ConsenSys and @johnmcdowall.
+You can see this plugin in operation in the [Truffle+Webpack Demo App](https://github.com/ConsenSys/truffle-webpack-demo). The demo is for truffle 4.0 & webpack 4
 
 ## Installation
 
-`$ npm install --save-dev truffle-solidity-loader json-loader`
+`$ npm install --save-dev truffle-solidity-loader`
 
-Add the appropriate config to your `loaders` section of your Webpack 2 config:
-
-```javascript
-{
-  test: /\.sol/,
-  use: [
-    { loader: 'json-loader' },
-    { loader: 'truffle-solidity-loader?network=development' }
-  ]
-}
-```
-
-Webpack applies loaders [right to left](https://webpack.js.org/api/loaders/#pitching-loader), therefore the output of `truffle-solidity-loader` goes into `json-loader`. The `network` parameter must be set, otherwise you get an error.
-
-
-### `truffle.js` integration
-
-The loader will detect a `truffle.js` (or `truffle-config.js` for Windows users) config file in your project and use that for configuration.
-
-Importantly, you will need to specify the location of your `migrations` directory in the `truffle.js` file like so:
-
-`"migrations_directory": "./migrations"`
-
-You can also override the Truffle config using a loader querystring as outlined below:
+Add the appropriate config to your `loaders` section of your Webpack 4 config:
 
 ```javascript
 {
   test: /\.sol/,
   use: [
-    { loader: 'json-loader' },
-    { loader: 'truffle-solidity-loader?migrations_directory=' + path.resolve(__dirname, './migrations') + '&network=development' }
-  ]
-}
-```
-
-If you don't want to set query parameters, you can provide a `json` object.
-
-```javascript
-{
-  test: /\.sol/,
-  use: [
-    { loader: 'json-loader' },
-    { loader: 'truffle-solidity-loader',
+    {
+      loader: 'json-loader'
+    },
+    {
+      loader: 'truffle-solidity-loader',
       options: {
-        migrations_directory: path.resolve(__dirname, './migrations'),
-        network: 'development'
+        network: 'ganache',
       }
     }
   ]
 }
 ```
 
+Webpack applies loaders [right to left](https://webpack.js.org/api/loaders/#pitching-loader), therefore the output of `truffle-solidity-loader` goes into `json-loader`.
 
-### Loader Query string config
 
-  - `migrations_directory`: The path to a directory containing your Truffle migrations
+### `truffle.js` integration
+
+The loader will auto detect a `truffle.js` (or `truffle-config.js` for Windows users) config file in your project and use that for configuration.
+
+### Loader options
+
+  - `migrations_directory`: The path truffle migration scripts
   - `network`: A network name to use
-  - `network_id`: A network id to use
-  - `contracts_build_directory`: Where do you want the created json file to exist?
+  - `contracts_build_directory`: path to directory of truffle JSON artifacts
+
+```javascript
+{
+  test: /\.sol/,
+  use: [
+    {
+      loader: 'json-loader'
+    },
+    {
+      loader: 'truffle-solidity-loader',
+      options: {
+        network: 'ganache',
+        migrations_directory: path.resolve(__dirname, './migrations'),
+        contracts_build_directory: path.resolve(__dirname, '../build/contracts')
+      }
+    }
+  ]
+}
+```
+
 
 ## Contributing
 

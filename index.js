@@ -7,7 +7,6 @@ const truffleMigrator = require('truffle-core/lib/commands/migrate')
 const Logger = require('./lib/logDecorator')
 const genBuildOptions = require('./lib/genBuildOptions')
 
-
 function parseContractName (resourcePath) {
   var contractFileName = path.basename(resourcePath)
   return contractFileName.charAt(0).toUpperCase() + contractFileName.slice(1, contractFileName.length - 4)
@@ -26,10 +25,10 @@ function returnContractAsSource (filePath, callback) {
 
 const schema = {
   'type': 'object',
-  'required': ['migrations_directory', 'network', 'contracts_build_directory'],
+  'required': ['network'],
   'properties': {
     'migrations_directory': {
-      'type': 'string',
+      'type': 'string'
     },
     'network': {
       'type': 'string'
@@ -39,27 +38,30 @@ const schema = {
     }
   },
   'additionalProperties': false
-};
-
+}
 
 module.exports = function (source, map, meta) {
   let WebpackOptions = getOptions(this) || {}
   validateOptions(schema, WebpackOptions, 'truffle-solidity-loader')
 
   let buildOpts = genBuildOptions(WebpackOptions)
-  let contractName = parseContractName(this.resourcePath)
+  let migrationsDirectory = WebpackOptions.migrations_directory || `${buildOpts.working_directory}/migrations`
+  let contractsBuildDirectory = WebpackOptions.contracts_build_directory || `${buildOpts.working_directory}/build/contracts`
+  let contractName = parseContractName(this.resourcePath) // this.resourcePath will be the path to the .sol file
   let contractJsonPath = path.resolve(buildOpts.contracts_build_directory, contractName + '.json')
   // this.addDependency(contractJsonPath); // NOTE adding dependency causes this to run twice
 
-  if(this.debug) {
-    Logger.debugger(`contractName = ${contractName}`)
-    Logger.debugger(`contracts_build_directory = ${buildOpts.contracts_build_directory}`)
-    Logger.debugger(`contractJsonPath = ${contractJsonPath}`)
+  if (this.debug) {
+    Logger.debugger(`this.resourcePath = ${this.resourcePath}`)
+    Logger.debugger(`contract Name = ${contractName}`)
+    Logger.debugger(`migrations Directory = ${migrationsDirectory}`)
+    Logger.debugger(`contracts Build Directory = ${contractsBuildDirectory}`)
+    Logger.debugger(`contract Json Path = ${contractJsonPath}`)
   }
 
-  let callback = this.async();
-  return truffleMigrator.run(buildOpts, function(err, data) {
-    if(err) {
+  let callback = this.async()
+  truffleMigrator.run(buildOpts, function (err) {
+    if (err) {
       this.emitError(err)
     } else {
       return returnContractAsSource(contractJsonPath, callback)
