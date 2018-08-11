@@ -18,8 +18,7 @@ function returnContractAsSource (filePath, callback) {
       Logger.error(err)
       return callback(err, null)
     }
-    let { abi, compiler, networks, schemaVersion, updatedAt } = JSON.parse(solJSON)
-    callback(null, JSON.stringify({ abi, compiler, networks, schemaVersion, updatedAt }))
+    callback(null, solJSON)
   })
 }
 
