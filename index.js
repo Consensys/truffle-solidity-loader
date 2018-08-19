@@ -61,7 +61,7 @@ module.exports = function (source, map, meta) {
   let callback = this.async()
   truffleMigrator.run(buildOpts, function (err) {
     if (err) {
-      this.emitError(err)
+      return callback(err)
     } else {
       return returnContractAsSource(contractJsonPath, callback)
     }
