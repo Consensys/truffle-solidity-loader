@@ -2,7 +2,7 @@
 
 A Webpack loader that will parse and provision Solidity files to Javascript using Truffle for compilation, and utilising Truffle's migrations. This allows you to develop your contracts with Hot Reloading support, and have your migrations automatically re-run on change.
 
-Each time you change a Solidity contract, Webpack will detect the change, recompile the Solidity files, and re-run your Truffle migrations. The updated Solidity contract will be Hot updated in teh browser if enabled.
+Each time you change a Solidity contract, Webpack will detect the change, recompile the Solidity files, and re-run your Truffle migrations. The updated Solidity contract will be Hot updated in the browser if enabled.
 
 When you run a production build, the contracts will be bundled into your main bundle for easy deployment.
 
